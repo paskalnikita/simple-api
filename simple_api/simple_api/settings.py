@@ -24,7 +24,7 @@ SECRET_KEY = 'i%*vn&71*w6wob*fr)+gk37i=)dygm@m_o5)wwr=fo+r@fi#6t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['157.230.24.222', '127.0.0.1', 'localhost', 'simple-api-11.herokuapp.com/', 'https://simple-api-11.herokuapp.com/']
+ALLOWED_HOSTS = ['157.230.24.222', '127.0.0.1', 'localhost', 'simple-api-11.herokuapp.com', 'https://simple-api-11.herokuapp.com/']
 
 
 # Application definition
@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'simple_api.urls'
