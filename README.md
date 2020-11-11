@@ -26,3 +26,7 @@ python3 manage.py runserver
 
 ### DEPLOY
 sudo snap install --classic heroku
+
+# Test app is runable
+cd simple_api/
+gunicorn simple_api.wsgi
