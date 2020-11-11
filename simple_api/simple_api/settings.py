@@ -120,6 +120,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROTT = os.path.join(BASE_DIR, 'staticfiles')
+DISABLE_COLLECTSTATIC=1
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
