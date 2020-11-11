@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<section class="genres full-header" id="genres">
+    <div class="container text-center">
+        <h1 class="text-center text-uppercase text-secondary mb-0">Select category</h1>
+        <hr class="star-dark mb-5">
+        <div class="row mt-1 text-center justify-content-center">
+            {% for genre in genres %}
+            <div class="p-2 col-lg-3 col-md-4">
+                <a href="#category-modal-{{genre.id}}"
+                   class="shadow-none font-weight-bold portfolio-item btn card card-body btn-outline-primary">{{genre.name}}</a>
+            </div>
+            <div class="portfolio-modal mfp-hide" id="category-modal-{{genre.id}}">
+                <div class="portfolio-modal-dialog bg-white">
+                    <a class="close-button d-md-block portfolio-modal-dismiss" href="#">
+                        <i class="fa fa-3x fa-times"></i>
+                    </a>
+                    <style>
+                        #loading { display: none; }
+                    </style>
+
+                    <script>
+                         $(document).ready(function(){
+                            $("#beta_info_{{genre.id}}").hide();
+                            $("#recommendations_{{genre.id}}").hide();
+                                $("#vote_film_{{genre.id}}").click(function(){
+                                    var quiz_hidden = $("#film_quiz_{{genre.id}}").hasClass("invisible");
+                                    if(quiz_hidden){
+                                        $.ajax({
+                                            type: "GET",
+                                            url: "/film_voter",
+                                            data: {get_recommendations: 1, genre_id: '{{genre.genre_id}}' },
+                                            success: function(result){
+                                                        var film_data = $.parseJSON(result);
+                                                        $("#film_id_{{genre.id}}").html(film_data['film_id']);
+                                                        $("#film_name_{{genre.id}}").html(film_data["film_title"]);
+                                                        $("#film_desc_{{genre.id}}").html(film_data["film_desc"]);
+                                                        $("#film_desc_{{genre.id}}").html(film_data["recommendation"]);
+                                                        $("#film_img_{{genre.id}}").attr("src", film_data['film_pic']);
+                                                        $("#film_quiz_{{genre.id}}").removeClass("invisible");
+                                                    }
+                                            });
+                                    }else{
+                                        var film_id = $('#film_id_{{genre.id}}').text();
+                                        $("#film_quiz_{{genre.id}}").removeClass("invisible");
+                                        var film_rate = $(".film_rate:checked").val();
+                                        var films_left = $("#movies_left_counter_{{genre.id}}").text();
+                                        if(films_left > 1){
+                                            if (film_rate){
+                                                $.ajax({
+                                                    type: "GET",
+                                                    url: "/film_voter",
+                                                    data: { genre_id: '{{genre.genre_id}}',
+                                                            film_id: film_id,
+                                                            film_rate: film_rate,
+                                                            films_left:films_left},
+                                                    success: function(result){
+                                                                var film_data = $.parseJSON(result);
+                                                                $("#film_id_{{genre.id}}").html(film_data['film_id']);
+                                                                $("#film_name_{{genre.id}}").html(film_data["film_title"]);
+                                                                $("#film_id_{{genre.id}}").html(film_data["film_id"]);
+                                                                $("#film_desc_{{genre.id}}").html(film_data["film_desc"]);
+                                                                $("#film_desc_{{genre.id}}").html(film_data["recommendation"]);
+                                                                $("#movies_left_counter_{{genre.id}}").html(film_data["films_left"]);
+                                                                $("#film_img_{{genre.id}}").attr("src", film_data['film_pic']);
+                                                                $("#film_quiz_{{genre.id}}").removeClass("invisible");
+                                                            }
+                                                });
+                                                $('input:radio').prop('checked', false);
+                                            }
+                                        }else if (films_left == 1 ){
+                                            $("#film_rates_section_{{genre.id}}").addClass("invisible");
+                                            $("#vote_film_{{genre.id}}").addClass("invisible");
+                                            $(document).ajaxStart(function() {
+                                                $("#status_info_{{genre.id}}").html('Analysing...');
+                                                $("#loading").show();
+                                                $("#beta_info_{{genre.id}}").show();
+                                                $("#film_quiz_{{genre.id}}").remove();
+                                            }).ajaxStop(function() {
+                                                $("#loading").hide();
+                                                $("#status_info_{{genre.id}}").html('Here is 3 films to see');
+                                                $("#recommendations_{{genre.id}}").show();
+                                            });
+                                             $.ajax({
+                                                    type: "GET",
+                                                    url: "/film_voter",
+                                                    data: { genre_id: '{{genre.genre_id}}',
+                                                            film_id: film_id,
+                                                            film_rate: film_rate,
+                                                            films_left:films_left},
+                                                    success: function(result){
+                                                                var film_data = $.parseJSON(result);
+                                                                $("#films_container_{{genre.id}}").removeClass("container");
+                                                                $("#film_id_{{genre.id}}").html(film_data['film_id']);
+                                                                $("#film_name_{{genre.id}}").html(film_data["film_title"]);
+
+                                                                $("#film_1_title_{{genre.id}}").html(film_data['film_1']['title']);
+                                                                $("#film_1_percent_{{genre.id}}").html(film_data['film_1']['percentage']+'%');
+                                                                $("#film_1_desc_{{genre.id}}").html(film_data['film_1']['desc']);
+                                                                $("#film_1_img_{{genre.id}}").attr("src", film_data['film_1']['img']);
+
+                                                                $("#film_2_title_{{genre.id}}").html(film_data['film_2']['title']);
+                                                                $("#film_2_percent_{{genre.id}}").html(film_data['film_2']['percentage']+'%');
+                                                                $("#film_2_desc_{{genre.id}}").html(film_data['film_2']['desc']);
+                                                                $("#film_2_img_{{genre.id}}").attr("src", film_data['film_2']['img']);
+
+                                                                $("#film_3_title_{{genre.id}}").html(film_data['film_3']['title']);
+                                                                $("#film_3_percent_{{genre.id}}").html(film_data['film_3']['percentage']+'%');
+                                                                $("#film_3_desc_{{genre.id}}").html(film_data['film_3']['desc']);
+                                                                $("#film_3_img_{{genre.id}}").attr("src", film_data['film_3']['img']);
+
+                                                                $("#film_desc_{{genre.id}}").html(film_data["film_desc"]);
+                                                                $("#film_desc_{{genre.id}}").html(film_data["recommendation"]);
+                                                                $("#movies_left_counter_{{genre.id}}").html(film_data["films_left"]);
+                                                                $("#film_quiz_{{genre.id}}").removeClass("invisible");
+                                                            }
+                                                });
+
+                                            }
+                                    }
+                                });
+                        });
+                    </script>
+                    <div class="container text-center" id="films_container_{{genre.id}}">
+                        <div class="row">
+                            <div class="col-lg-8 mx-auto">
+                                <h2 class="text-secondary text-uppercase mb-0">{{genre.name}}</h2>
+                                <hr class="star-dark mb-5">
+                                <h3 class="mb-1" id="status_info_{{genre.id}}">Vote <span
+                                        id="movies_left_counter_{{genre.id}}">2</span> movies and get 3 recommended</h3>
+                            </div>
+                        </div>
+
+                             <!-- quiz for ten movies -->
+                        <div id="film_quiz_{{genre.id}}" class="invisible">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title" id="film_name_{{genre.id}}">film title</h5>
+                                    <div class=" card-text row">
+                                        <div class="col">
+                                            <img src="" class="rounded" style="float:left;"  id="film_img_{{genre.id}}">
+                                        </div>
+                                        <div class="col text-center">
+                                            <div class="row" id="film_desc_{{genre.id}}"></div>
+                                            <p class="h5">Are you interested?</p>
+                                            <div class="row justify-content-center"
+                                                 id="film_rates_section_{{genre.id}}">
+                                                <span class="text-danger text-left">No</span>
+                                                1<input type="radio" class='mr-1 film_rate' name="film_rate" value="1">
+                                                2<input type="radio" class='mr-1 film_rate' name="film_rate" value="2">
+                                                3<input type="radio" class='mr-1 film_rate' name="film_rate" value="3">
+                                                4<input type="radio" class='mr-1 film_rate' name="film_rate" value="4">
+                                                5<input type="radio" class='mr-1 film_rate' name="film_rate" value="5">
+                                                <span class="text-success">Yes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     {% if not request.user.is_authenticated %}
+                                        <div class="alert alert-danger mt-3">You are not logged in, please
+                                        <a href="/login" target="_blank" class="alert-link">log in</a>
+                                         to get better recommendations!
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true"><i class="fa  text-danger fa-1x fa-times"></i></span>
+                                    </button>
+                                    </div>
+                                {% endif %}
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    <div id="loading">
+                        <br>
+                      <i class="fa fa-spinner fa-pulse fa-3x fa-fw text-primary"></i>
+                    </div>
+                        <!--recommended three movies-->
+                        <div class="card-body" id="recommendations_{{genre.id}}">
+                            <div class="row p-1">
+
+                                  <div class="col card m-1">
+                                    <div class="row">
+                                        <div class="col bg-primary" id="film_1_title_{{genre.id}}"></div>
+                                    </div>
+                                    <div class="row text-left mt-3">
+                                        <div class="col float-left">
+                                            <img src="" class="rounded" id="film_1_img_{{genre.id}}">
+                                        </div>
+                                        <div class="col" id="film_1_desc_{{genre.id}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <div class="col card m-1">
+                                    <div class="row">
+                                        <div class="col bg-primary" id="film_2_title_{{genre.id}}"></div>
+                                    </div>
+                                    <div class="row text-left mt-3">
+                                        <div class="col float-left">
+                                            <img src="" class="rounded" id="film_2_img_{{genre.id}}">
+                                        </div>
+                                        <div class="col" id="film_2_desc_{{genre.id}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <div class="col card m-1">
+                                    <div class="row">
+                                        <div class="col bg-primary" id="film_3_title_{{genre.id}}"></div>
+                                    </div>
+                                    <div class="row text-left mt-3">
+                                        <div class="mb-3 col float-left">
+                                            <img src="" class="rounded" id="film_3_img_{{genre.id}}">
+                                        </div>
+                                        <div class="col" id="film_3_desc_{{genre.id}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                          <p class="h4" id="beta_info_{{genre.id}}">
+                              <br>
+                                It is <b>&beta;</b> version - algorithm need big amount of data to learn.
+                                  {% if not request.user.is_authenticated %}
+                                    Help us and <a href="/login" target="_blank">login</a>.
+                                  {% endif %}
+                            </p>
+
+                        <form action="" method="GET">
+                            <div class="invisible" id="film_id_{{genre.id}}">0</div>
+                            <input type="button" class="btn btn-primary mt-2"
+                                   id="vote_film_{{genre.id}}"
+                                   value="Vote">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+<!--<section class="genres" id="genres">-->
+      <!--<div class="d-flex justify-content-center">-->
+        <!--<ul class="pagination">-->
+            <!--<li class="page-item"><a class="page-link" href="#">All</a></li>-->
+            <!--<li class="page-item"><a class="page-link" href="#">Top</a></li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+    <!--{% for film_category in genres %}-->
+    <!--<div class="row">-->
+            <!--<div class="col-lg-3 col-md-4">-->
+                <!--<a href="#category-modal-{{film_category.id}}"-->
+                   <!--class="shadow-none font-weight-bold portfolio-item btn card-body btn-outline-primary">{{film_category.name}}</a>-->
+                <!--&lt;!&ndash;<h5 class="card-title">{{film_category.name}}</h5>&ndash;&gt;-->
+            <!--</div>-->
+        <!--</div>-->
+            <!--<div class="portfolio-modal mfp-hide" id="category-modal-{{film_category.id}}">-->
+                <!--<div class="portfolio-modal-dialog bg-white">-->
+                    <!--<a class="close-button d-md-block portfolio-modal-dismiss" href="#">-->
+                        <!--<i class="fa fa-3x fa-times"></i>-->
+                    <!--</a>-->
+                    <!--<script>-->
+                        <!--$(document).ready(function(){-->
+                                <!--$("#vote_film_{{film_category.id}}").click(function(){-->
+                                    <!--var quiz_hidden = $("#film_quiz_{{film_category.id}}").hasClass("invisible");-->
+                                    <!--if(quiz_hidden){-->
+                                        <!--$.ajax({-->
+                                            <!--type: "GET",-->
+                                            <!--url: "/list",-->
+                                            <!--data: {get_recommendations: 1, film_category: '{{film_category.name}}' },-->
+                                            <!--success: function(result){-->
+                                                        <!--var film_data = $.parseJSON(result);-->
+                                                        <!--$("#film_name_{{film_category.id}}").html(film_data["film_id"]);-->
+                                                        <!--$("#film_desc_{{film_category.id}}").html(film_data["film_desc"]);-->
+                                                        <!--$("#film_desc_{{film_category.id}}").html(film_data["recommendation"]);-->
+                                                        <!--$("#film_quiz_{{film_category.id}}").removeClass("invisible");-->
+                                                    <!--}-->
+                                            <!--});-->
+                                    <!--}else{-->
+                                        <!--var film_id = $('#vote_film_{{film_category.id}}').val();-->
+                                        <!--$("#film_quiz_{{film_category.id}}").removeClass("invisible");-->
+                                        <!--var film_rate = $(".film_rate:checked").val();-->
+                                        <!--var films_left = $("#films_left_{{film_category.id}}").text();-->
+                                        <!--console.log(films_left);-->
+                                        <!--if (film_rate){-->
+                                            <!--$.ajax({-->
+                                                <!--type: "GET",-->
+                                                <!--url: "/list",-->
+                                                <!--data: {film_id: film_id,-->
+                                                        <!--film_rate: film_rate,-->
+                                                        <!--films_left:films_left},-->
+                                                <!--success: function(result){-->
+                                                            <!--var film_data = $.parseJSON(result);-->
+                                                            <!--$("#film_name_{{film_category.id}}").html(film_data["film_id"]);-->
+                                                            <!--$("#film_desc_{{film_category.id}}").html(film_data["film_desc"]);-->
+                                                            <!--$("#film_desc_{{film_category.id}}").html(film_data["recommendation"]);-->
+                                                            <!--$("#films_left_{{film_category.id}}").html(film_data["films_left"]);-->
+                                                            <!--$("#film_quiz_{{film_category.id}}").removeClass("invisible");-->
+                                                        <!--}-->
+                                            <!--});-->
+                                            <!--$('input:radio').prop('checked', false);-->
+                                        <!--}-->
+                                    <!--}-->
+                                <!--});-->
+                        <!--});-->
+                    <!--</script>-->
+                        <!--<div class="container text-center">-->
+                            <!--<div class="row">-->
+                                <!--<div class="col-lg-8 mx-auto">-->
+                                    <!--<h2 class="text-secondary text-uppercase mb-0">{{film_category.name}}</h2>-->
+                                    <!--<hr class="star-dark mb-5">-->
+                                    <!--<h3 class="mb-1">Vote <span id="films_left_{{film_category.id}}">10</span>-->
+                                        <!--films and get 3 recommended</h3>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div id="film_quiz_{{film_category.id}}" class="invisible">-->
+                                <!--<div class="card">-->
+                                    <!--<div class="card-header" id="film_name_{{film_category.id}}">-->
+                                        <!--film title-->
+                                    <!--</div>-->
+                                    <!--<div class="card-body">-->
+                                        <!--<h5 class="card-title">Special title treatment</h5>-->
+                                        <!--<p class="card-text">-->
+                                        <!--<div class="row">-->
+                                            <!--<div class="col">-->
+                                                <!--FILM PIC-->
+                                                <!--<img src="fdsdfs.png">-->
+                                            <!--</div>-->
+                                            <!--<div class="col text-center">-->
+                                                <!--<div class="row" id="film_desc_{{film_category.id}}"></div>-->
+                                                <!--<div class="row justify-content-center">-->
+                                                    <!--1<input type="radio" class='mr-1 film_rate' name="film_rate" value="1">-->
+                                                    <!--2<input type="radio" class='mr-1 film_rate' name="film_rate" value="2">-->
+                                                    <!--3<input type="radio" class='mr-1 film_rate' name="film_rate" value="3">-->
+                                                    <!--4<input type="radio" class='mr-1 film_rate' name="film_rate" value="4">-->
+                                                    <!--5<input type="radio" class='mr-1 film_rate' name="film_rate" value="5">-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--</p>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<form action="" method="GET">-->
+                                <!--<input type="button" class="btn btn-primary mt-2" name='film_id'-->
+                                       <!--id="vote_film_{{film_category.id}}"-->
+                                       <!--value="Vote">-->
+                            <!--</form>-->
+                        <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--{% endfor %}-->
+
+
+    <!--<div class="container text-center">-->
+        <!--<div class="row mt-1 text-center justify-content-center">-->
+            <!--genres list-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</section>-->
+{% endblock %}

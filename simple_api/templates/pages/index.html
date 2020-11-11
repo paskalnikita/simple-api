@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<section class="container" id="main">
+    <div class="row">
+        <div class="col-lg-4">
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link py-2 px-0 px-lg-3 js-scroll-trigger" href="/api/add">Add post</a>
+                    <a class="nav-link py-2 px-0 px-lg-3 js-scroll-trigger" href="/logout">Logout</a>
+                </li>
+            </ul>
+            {% else %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link py-2 px-0 px-lg-3 js-scroll-trigger" href="/login">Log in</a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+        <div class="col">
+
+            {% for mes in messages%}
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="card mt-2 p-3">
+                        <div class="row">
+                            <div class="col">
+                                {{mes.message.message}}
+                                {{mes.message.created}}
+                            </div>
+                            <div class="col"><span class="badge badge-pill badge-success float-right">
+                                    {{mes.counter}}
+                                </span></div>
+                        </div>
+
+                    </div>
+                </div>
+                {% if mes.message.user == user %}
+                <div class="col">
+                    <a class="btn btn-info" href="/api/edit/{{mes.message.id}}/">
+                        Edit</a>
+                    </form>
+
+                    <form action="/api/delete" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name='id' value="{{mes.message.id}}">
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</section>
+{% endblock %}

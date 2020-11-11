@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<section id="main">
+    <div class="container text-center mx-auto">
+        <p>
+            <h4>Write your massage</h4>
+            {% if error %}
+            <div class="alert alert-danger">
+                <strong>Error!</strong> {{error}}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              </div>
+            {% endif %}
+
+            {% if success %}
+            <div class="alert alert-success">
+                <strong>Done!</strong> {{success}}
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              </div>
+            {% endif %}
+            <form action="/api/add" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea name='message' id='message'class="form-control" rows="15"></textarea>
+                  </div>
+                <input type="submit"  class="btn btn-info" value="Submit">
+            </form>
+        </p>
+    </div>
+</section>
+{% endblock %}
