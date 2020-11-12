@@ -27,6 +27,7 @@ python3 manage.py runserver
 ### DEPLOY
 sudo snap install --classic heroku
 heroku login
+heroku ps:scale web=1
 
 heroku git:remote -a simple-api-07
 
