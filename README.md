@@ -11,17 +11,12 @@ source env/bin/activate
 # Install requirements
 pip install -r requirements.txt
 
-
-
-
 # Apply and create DB
 python3 manage.py makemigrations simple_api
 python3 manage.py migrate
 
 # You have to create new user to be able to make extra posts
 python3 manage.py createsuperuser
-
-
 
 # Run app
 python3 manage.py runserver
