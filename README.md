@@ -36,7 +36,7 @@ heroku buildpacks:set heroku/python
 heroku local
 
 git add .
-git commit -m"static"
+git commit -m"message"
 git push heroku HEAD:master
 
 # Test app is runable
