@@ -12,7 +12,6 @@ from .functions import client_ip, count_views
 def index(request):
     ip = client_ip(request)
     messages = Message.objects.all()
-    # context = {'messages': messages}
     context = {}
     context['messages'] = []
     for message in messages:

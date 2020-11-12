@@ -1,5 +1,6 @@
 from .models import Message, ViewsCounter
 
+
 def client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -7,7 +8,6 @@ def client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
-
 
 
 def count_views(message, client_ip):
