@@ -26,7 +26,14 @@ python3 manage.py runserver
 
 ### DEPLOY
 sudo snap install --classic heroku
-heroku buildpacks:set heroku/php
+heroku login
+
+heroku git:remote -a simple-api-07
+
+heroku buildpacks:set heroku/python
+
+heroku local
+
 git add .
 git commit -m"static"
 git push heroku HEAD:master
