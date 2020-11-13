@@ -1,5 +1,5 @@
 # simple-api
-Simplae api for creating, updating, deleting posts.
+Simple api for creating, updating, deleting posts.https://simple-api-07.herokuapp.com/
 User **admin:admin** alredy exists. You can login with this credentials for making posts.
 
 ### Install virtual env
